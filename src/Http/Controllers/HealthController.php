@@ -11,8 +11,48 @@ class HealthController extends Controller
      */
     private static function getServerCpuUsage()
     {
-        $load = sys_getloadavg();
-        return $load[0];
+        $serverLoad = [];
+
+        // DIRECTORY_SEPARATOR checks if running windows
+        if (DIRECTORY_SEPARATOR != '\\') {
+            if (function_exists("sys_getloadavg")) {
+                // sys_getloadavg() will return an array with [0] being load within the last minute.
+                $serverLoad    = sys_getloadavg();
+                $serverLoad[0] = round($serverLoad[0], 4);
+            } elseif (@file_exists("/proc/loadavg") && $load = @file_get_contents("/proc/loadavg")) {
+                $serverLoad    = explode(" ", $load);
+                $serverLoad[0] = round($serverLoad[0], 4);
+            }
+            if (!is_numeric($serverLoad[0])) {
+                if (@ini_get('safe_mode') == 'On') {
+                    return "Unknown";
+                }
+
+                // Suhosin likes to throw a warning if exec is disabled then die - weird
+                if ($func_blacklist = @ini_get('suhosin.executor.func.blacklist')) {
+                    if (strpos(",".$func_blacklist.",", 'exec') !== false) {
+                        return "Unknown";
+                    }
+                }
+                // PHP disabled functions?
+                if ($func_blacklist = @ini_get('disable_functions')) {
+                    if (strpos(",".$func_blacklist.",", 'exec') !== false) {
+                        return "Unknown";
+                    }
+                }
+
+                $load       = @exec("uptime");
+                $load       = explode("load average: ", $load);
+                $serverLoad = explode(",", $load[1]);
+                if (!is_array($serverLoad)) {
+                    return "Unknown";
+                }
+            }
+        } else {
+            return "Unknown";
+        }
+
+        return trim($serverLoad[0]);
     }
 
     /**
@@ -20,15 +60,15 @@ class HealthController extends Controller
      */
     protected static function getServerMemoryUsage()
     {
-        $free = shell_exec('free');
+        $free         = shell_exec('free');
         $memory_usage = 0;
 
         if ($free) {
-            $free = (string) trim($free);
-            $free_arr = explode("\n", $free);
-            $mem = explode(" ", $free_arr[1]);
-            $mem = array_filter($mem);
-            $mem = array_merge($mem);
+            $free         = (string)trim($free);
+            $free_arr     = explode("\n", $free);
+            $mem          = explode(" ", $free_arr[1]);
+            $mem          = array_filter($mem);
+            $mem          = array_merge($mem);
             $memory_usage = $mem[2] / $mem[1] * 100;
         }
         return $memory_usage;
@@ -82,14 +122,14 @@ class HealthController extends Controller
         $response['request']['ip'] = \Request::ip();
 
         // CPU
-        $response['cpu']['usage'] = floatval(number_format(self::getServerCpuUsage(), 2));
+        $response['cpu']['usage'] = self::getServerCpuUsage();
 
         // Memory
-        $response['memory']['free'] = self::formatSizeUnits(self::getServerMemoryUsage());
+        $response['memory']['free']  = self::formatSizeUnits(self::getServerMemoryUsage());
         $response['memory']['total'] = self::formatSizeUnits(memory_get_usage(true));
 
         # Disk
-        $response['disk']['free'] = self::formatSizeUnits(disk_free_space('/'));
+        $response['disk']['free']  = self::formatSizeUnits(disk_free_space('/'));
         $response['disk']['total'] = self::formatSizeUnits(disk_total_space('/'));
 
         return $response;
