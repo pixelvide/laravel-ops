@@ -43,6 +43,9 @@ class DeviceController extends Controller
                 ->setVisitorUa($request->userAgent())
                 ->addExtraParams('deviceToken', $request->input('deviceToken'))
                 ->addExtraParams('deviceAuthToken', $request->input('authToken'));
+
+            print_r($dfpRequest->buildPayload());
+
             $dfpGw = new DFPGateway();
             return $dfpGw->send($dfpRequest);
         } catch (\Exception $exception) {
