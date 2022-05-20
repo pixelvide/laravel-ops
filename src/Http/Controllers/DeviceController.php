@@ -4,6 +4,7 @@ namespace Pixelvide\Ops\Http\Controllers;
 
 use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Pixelvide\Ops\DFPGateway;
 use Pixelvide\Ops\DFPRequest;
 
@@ -62,5 +63,32 @@ class DeviceController extends Controller
         return view('ops::device-layout', [
             'verifyDevice' => $verifyDeviceRes,
         ]);
+    }
+
+    function verifyRequest(Request $request, $userId)
+    {
+        try {
+            $visitorToken     = $request->cookie('_vidt');
+            $dfpCacheKey      = 'dfp:'.$userId.':'.$visitorToken;
+
+            if (!(Cache::has($dfpCacheKey))) {
+                $dfpRequest = new DFPRequest();
+                $dfpRequest->setAction('VerifyRequest')
+                    ->setAppId(env('DFP_GATEWAY_APP_ID'))
+                    ->setVisitorIp($request->getClientIp())
+                    ->setVisitorToken($request->cookie('_vidt'))
+                    ->setVisitorUa($request->userAgent())
+                    ->addExtraParams('userId', $userId);
+                $dfpGw            = new DFPGateway();
+                $verifyRequestRes = $dfpGw->send($dfpRequest);
+                Cache::put($dfpCacheKey, $verifyRequestRes, now()->addMinutes(30));
+            }
+
+            $verifyRequestRes = Cache::get($dfpCacheKey);
+        } catch (\Exception $exception) {
+            report($exception);
+            $verifyRequestRes['errorMessage'] = $exception->getMessage();
+        }
+        return $verifyRequestRes;
     }
 }
