@@ -14,6 +14,14 @@ class DeviceController extends Controller
      */
     public function index(Request $request)
     {
+        if ($request->isMethod('post')) {
+            return $this->verifyDevice($request);
+        }
+        return $this->addDevice($request);
+    }
+
+    private function addDevice(Request $request)
+    {
         $addDeviceRes = [];
         try {
             $dfpRequest = new DFPRequest();
@@ -33,7 +41,7 @@ class DeviceController extends Controller
         ]);
     }
 
-    public function verifyDevice(Request $request)
+    private function verifyDevice(Request $request)
     {
         $verifyDeviceRes = [];
         try {
