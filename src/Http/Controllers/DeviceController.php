@@ -35,6 +35,8 @@ class DeviceController extends Controller
     public function verifyDevice(Request $request)
     {
         try {
+            print_r($request->input());
+
             $dfpRequest = new DFPRequest();
             $dfpRequest->setAction('VerifyDevice')
                 ->setAppId(env('DFP_GATEWAY_APP_ID'))
