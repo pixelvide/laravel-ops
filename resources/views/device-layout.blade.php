@@ -8,5 +8,9 @@
 </head>
 <body>
 
+<form method="post">
+  <input value="{{$addDevice->deviceToken}}">
+</form>
+
 </body>
 </html>

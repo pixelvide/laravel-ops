@@ -13,8 +13,8 @@ class DeviceController extends Controller
      */
     public function index()
     {
-        $this->addDevice();
-        return view('ops::device-layout');
+        $addDeviceRes = $this->addDevice();
+        return view('ops::device-layout')->with('addDevice', $addDeviceRes);
     }
 
     private function addDevice()
@@ -29,11 +29,11 @@ class DeviceController extends Controller
             $dfpRequest->setVisitorIp($visitorIp)
                 ->setVisitorToken($visitorToken)
                 ->setVisitorUa($visitorUa);
-            $dfpGw  = new DFPGateway();
-            $dfpRes = $dfpGw->send($dfpRequest);
-            print_r($dfpRes);
+            $dfpGw = new DFPGateway();
+            return $dfpGw->send($dfpRequest);
         } catch (\Exception $exception) {
-            print_r($exception);
+            report($exception);
         }
+        return [];
     }
 }
