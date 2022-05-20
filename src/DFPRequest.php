@@ -66,11 +66,11 @@ class DFPRequest
     public function buildPayload(): array
     {
         $data = [
-            "Action"       => $this->action,
-            "AppId"        => $this->appId,
-            "VisitorToken" => $this->visitorToken,
-            "VisitorIp"    => $this->visitorIp,
-            "VisitorUa"    => $this->visitorUa,
+            "action"       => $this->action,
+            "appId"        => $this->appId,
+            "visitorToken" => $this->visitorToken,
+            "visitorIp"    => $this->visitorIp,
+            "visitorUa"    => $this->visitorUa,
         ];
         foreach ($this->extraParams as $key => $val) {
             $data[$key] = $val;
