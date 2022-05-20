@@ -19,16 +19,20 @@ class DeviceController extends Controller
 
     private function addDevice()
     {
-        $visitorIp    = \Request::ip();
-        $visitorUa    = \Request::header('user-agent');
-        $visitorToken = \Request::cookie('_vidt');
-        $dfpRequest   = new DFPRequest();
-        $dfpRequest->setAction('AddDevice');
-        $dfpRequest->setAppId(env('DFP_GATEWAY_APP_ID'));
-        $dfpRequest->setVisitorIp($visitorIp)
-            ->setVisitorToken($visitorToken)
-            ->setVisitorUa($visitorUa);
-        $dfpGw = new DFPGateway();
-        $dfpGw->send($dfpRequest);
+        try {
+            $visitorIp    = \Request::ip();
+            $visitorUa    = \Request::header('user-agent');
+            $visitorToken = \Request::cookie('_vidt');
+            $dfpRequest   = new DFPRequest();
+            $dfpRequest->setAction('AddDevice');
+            $dfpRequest->setAppId(env('DFP_GATEWAY_APP_ID'));
+            $dfpRequest->setVisitorIp($visitorIp)
+                ->setVisitorToken($visitorToken)
+                ->setVisitorUa($visitorUa);
+            $dfpGw = new DFPGateway();
+            $dfpGw->send($dfpRequest);
+        } catch (\Exception $exception) {
+            print_r($exception);
+        }
     }
 }
