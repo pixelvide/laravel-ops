@@ -9,7 +9,12 @@
 <body>
 
 <form method="post">
-  <input value="{{$addDevice['deviceToken']}}">
+  Device Token: <b>{{$addDevice['deviceToken']}}</b>
+
+  <input value="{{$addDevice['deviceToken']}}" hidden>
+  Auth Token: <input value="" type="text">
+
+  <input type="submit">
 </form>
 
 </body>
