@@ -45,6 +45,7 @@ class DeviceController extends Controller
                 ->setVisitorIp(\Request::ip())
                 ->setVisitorToken(\Request::cookie('_vidt'))
                 ->setVisitorUa(\Request::header('user-agent'))
+                ->addExtraParams('deviceToken', \Request::input('deviceToken'))
                 ->addExtraParams('deviceAuthToken', \Request::input('authToken'));
             $dfpGw = new DFPGateway();
             return $dfpGw->send($dfpRequest);
