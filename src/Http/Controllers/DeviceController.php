@@ -29,8 +29,9 @@ class DeviceController extends Controller
             $dfpRequest->setVisitorIp($visitorIp)
                 ->setVisitorToken($visitorToken)
                 ->setVisitorUa($visitorUa);
-            $dfpGw = new DFPGateway();
-            $dfpGw->send($dfpRequest);
+            $dfpGw  = new DFPGateway();
+            $dfpRes = $dfpGw->send($dfpRequest);
+            print_r($dfpRes);
         } catch (\Exception $exception) {
             print_r($exception);
         }
