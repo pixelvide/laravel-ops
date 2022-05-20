@@ -24,6 +24,10 @@ class OpsServiceProvider extends ServiceProvider
 
         $this->registerRoutes();
         $this->registerPublishing();
+
+        $this->loadViewsFrom(
+            __DIR__.'/../resources/views', 'ops'
+        );
     }
 
     /**
