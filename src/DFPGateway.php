@@ -3,7 +3,6 @@
 namespace Pixelvide\Ops;
 
 use Aws\Lambda\LambdaClient;
-use Aws\Sqs\SqsClient;
 use Pixelvide\Ops\Exceptions\DFPActionNotSetException;
 use Pixelvide\Ops\Exceptions\DFPAppIdNotSetException;
 use Pixelvide\Ops\Exceptions\DFPVisitorIpNotSetException;
