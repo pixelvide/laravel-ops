@@ -78,6 +78,12 @@ class DFPRequest
         return $data;
     }
 
+    public function addExtraParams(string $key, $val): DFPRequest
+    {
+        $this->extraParams[$key] = $val;
+        return $this;
+    }
+
     public function setAction(string $action): DFPRequest
     {
         $this->action = $action;

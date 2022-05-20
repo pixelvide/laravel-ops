@@ -15,22 +15,37 @@ class DeviceController extends Controller
     {
         $addDeviceRes = $this->addDevice();
         return view('ops::device-layout', [
-            'addDevice' => $addDeviceRes
+            'addDevice' => $addDeviceRes,
         ]);
     }
 
     private function addDevice()
     {
         try {
-            $visitorIp    = \Request::ip();
-            $visitorUa    = \Request::header('user-agent');
-            $visitorToken = \Request::cookie('_vidt');
-            $dfpRequest   = new DFPRequest();
-            $dfpRequest->setAction('AddDevice');
-            $dfpRequest->setAppId(env('DFP_GATEWAY_APP_ID'));
-            $dfpRequest->setVisitorIp($visitorIp)
-                ->setVisitorToken($visitorToken)
-                ->setVisitorUa($visitorUa);
+            $dfpRequest = new DFPRequest();
+            $dfpRequest->setAction('AddDevice')
+                ->setAppId(env('DFP_GATEWAY_APP_ID'))
+                ->setVisitorIp(\Request::ip())
+                ->setVisitorToken(\Request::cookie('_vidt'))
+                ->setVisitorUa(\Request::header('user-agent'));
+            $dfpGw = new DFPGateway();
+            return $dfpGw->send($dfpRequest);
+        } catch (\Exception $exception) {
+            report($exception);
+        }
+        return [];
+    }
+
+    public function verifyDevice()
+    {
+        try {
+            $dfpRequest = new DFPRequest();
+            $dfpRequest->setAction('VerifyDevice')
+                ->setAppId(env('DFP_GATEWAY_APP_ID'))
+                ->setVisitorIp(\Request::ip())
+                ->setVisitorToken(\Request::cookie('_vidt'))
+                ->setVisitorUa(\Request::header('user-agent'))
+                ->addExtraParams('deviceAuthToken', \Request::input('authToken'));
             $dfpGw = new DFPGateway();
             return $dfpGw->send($dfpRequest);
         } catch (\Exception $exception) {
