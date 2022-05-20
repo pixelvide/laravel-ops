@@ -2,8 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 
-// DFP Device URL
-Route::get('/device', 'DFPController@index');
+// Device (DFP) URL
+Route::get('/device', 'DeviceController@index');
 
 // Health URL
 Route::get('/health', 'HealthController@health');

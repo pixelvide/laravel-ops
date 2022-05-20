@@ -4,7 +4,7 @@ namespace Pixelvide\Ops\Http\Controllers;
 
 use Illuminate\Routing\Controller;
 
-class DFPController extends Controller
+class DeviceController extends Controller
 {
     /**
      * @return mixed
@@ -12,7 +12,7 @@ class DFPController extends Controller
     public function index()
     {
         $this->addDevice();
-        return view('ops::layout');
+        return view('ops::device-layout');
     }
 
     private function addDevice()
