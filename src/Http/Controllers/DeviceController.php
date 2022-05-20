@@ -14,7 +14,9 @@ class DeviceController extends Controller
     public function index()
     {
         $addDeviceRes = $this->addDevice();
-        return view('ops::device-layout')->with('addDevice', $addDeviceRes);
+        return view('ops::device-layout', [
+            'addDevice' => $addDeviceRes
+        ]);
     }
 
     private function addDevice()
