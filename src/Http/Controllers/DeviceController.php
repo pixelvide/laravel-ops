@@ -3,6 +3,7 @@
 namespace Pixelvide\Ops\Http\Controllers;
 
 use Illuminate\Routing\Controller;
+use Illuminate\Http\Request;
 use Pixelvide\Ops\DFPGateway;
 use Pixelvide\Ops\DFPRequest;
 
@@ -11,42 +12,37 @@ class DeviceController extends Controller
     /**
      * @return mixed
      */
-    public function index()
+    public function index(Request $request)
     {
-        $addDeviceRes = $this->addDevice();
+        $addDeviceRes = [];
+        try {
+            $dfpRequest = new DFPRequest();
+            $dfpRequest->setAction('AddDevice')
+                ->setAppId(env('DFP_GATEWAY_APP_ID'))
+                ->setVisitorIp($request->getClientIp())
+                ->setVisitorToken($request->cookie('_vidt'))
+                ->setVisitorUa($request->userAgent());
+            $dfpGw        = new DFPGateway();
+            $addDeviceRes = $dfpGw->send($dfpRequest);
+        } catch (\Exception $exception) {
+            report($exception);
+        }
         return view('ops::device-layout', [
             'addDevice' => $addDeviceRes,
         ]);
     }
 
-    private function addDevice()
-    {
-        try {
-            $dfpRequest = new DFPRequest();
-            $dfpRequest->setAction('AddDevice')
-                ->setAppId(env('DFP_GATEWAY_APP_ID'))
-                ->setVisitorIp(\Request::ip())
-                ->setVisitorToken(\Request::cookie('_vidt'))
-                ->setVisitorUa(\Request::header('user-agent'));
-            $dfpGw = new DFPGateway();
-            return $dfpGw->send($dfpRequest);
-        } catch (\Exception $exception) {
-            report($exception);
-        }
-        return [];
-    }
-
-    public function verifyDevice()
+    public function verifyDevice(Request $request)
     {
         try {
             $dfpRequest = new DFPRequest();
             $dfpRequest->setAction('VerifyDevice')
                 ->setAppId(env('DFP_GATEWAY_APP_ID'))
-                ->setVisitorIp(\Request::ip())
-                ->setVisitorToken(\Request::cookie('_vidt'))
-                ->setVisitorUa(\Request::header('user-agent'))
-                ->addExtraParams('deviceToken', \Request::input('deviceToken'))
-                ->addExtraParams('deviceAuthToken', \Request::input('authToken'));
+                ->setVisitorIp($request->getClientIp())
+                ->setVisitorToken($request->cookie('_vidt'))
+                ->setVisitorUa($request->userAgent())
+                ->addExtraParams('deviceToken', $request->input('deviceToken'))
+                ->addExtraParams('deviceAuthToken', $request->input('authToken'));
             $dfpGw = new DFPGateway();
             return $dfpGw->send($dfpRequest);
         } catch (\Exception $exception) {
