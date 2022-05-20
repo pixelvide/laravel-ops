@@ -50,7 +50,7 @@ class DeviceController extends Controller
             $dfpGw = new DFPGateway();
             return $dfpGw->send($dfpRequest);
         } catch (\Exception $exception) {
-            print_r($exception);
+            report($exception);
         }
         return [];
     }
