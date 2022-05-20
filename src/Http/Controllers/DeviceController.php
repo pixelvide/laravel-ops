@@ -34,9 +34,8 @@ class DeviceController extends Controller
 
     public function verifyDevice(Request $request)
     {
+        $verifyDeviceRes = [];
         try {
-            print_r($request->input());
-
             $dfpRequest = new DFPRequest();
             $dfpRequest->setAction('VerifyDevice')
                 ->setAppId(env('DFP_GATEWAY_APP_ID'))
@@ -45,14 +44,14 @@ class DeviceController extends Controller
                 ->setVisitorUa($request->userAgent())
                 ->addExtraParams('deviceToken', $request->input('deviceToken'))
                 ->addExtraParams('deviceAuthToken', $request->input('authToken'));
-
-            print_r($dfpRequest->buildPayload());
-
-            $dfpGw = new DFPGateway();
-            return $dfpGw->send($dfpRequest);
+            $dfpGw           = new DFPGateway();
+            $verifyDeviceRes = $dfpGw->send($dfpRequest);
         } catch (\Exception $exception) {
             report($exception);
+            $verifyDeviceRes['errorMessage'] = $exception->getMessage();
         }
-        return [];
+        return view('ops::device-layout', [
+            'verifyDevice' => $verifyDeviceRes,
+        ]);
     }
 }
