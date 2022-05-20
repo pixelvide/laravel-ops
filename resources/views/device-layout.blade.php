@@ -9,7 +9,7 @@
 <body>
 
 <form method="post">
-  <input value="{{$addDevice->deviceToken}}">
+  <input value="{{$addDevice['deviceToken']}}">
 </form>
 
 </body>
