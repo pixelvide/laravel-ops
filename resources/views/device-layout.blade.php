@@ -8,7 +8,7 @@
 </head>
 <body>
 
-@if($addDevice)
+@if(isset($addDevice))
   <form method="post">
     Device Token: <b>{{$addDevice['deviceToken']}}</b>
 
@@ -19,7 +19,7 @@
   </form>
 @endif
 
-@if($verifyDevice)
+@if(isset($verifyDevice))
   {{$verifyDevice['message']}}{{$verifyDevice['errorMessage']}}
 @endif
 
