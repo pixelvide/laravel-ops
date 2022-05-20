@@ -11,8 +11,8 @@
 <form method="post">
   Device Token: <b>{{$addDevice['deviceToken']}}</b>
 
-  <input value="{{$addDevice['deviceToken']}}" hidden>
-  Auth Token: <input value="" type="text">
+  <input name="deviceToken" value="{{$addDevice['deviceToken']}}" hidden>
+  Auth Token: <input name="authToken" value="" type="text">
 
   <input type="submit">
 </form>
