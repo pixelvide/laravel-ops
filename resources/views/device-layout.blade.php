@@ -9,14 +9,19 @@
 <body>
 
 @if(isset($addDevice))
-  <form method="post">
-    Device Token: <b>{{$addDevice['deviceToken']}}</b>
+  @if(isset($addDevice['deviceToken']))
+    <form method="post">
+      Device Token: <b>{{$addDevice['deviceToken']}}</b>
 
-    <input name="deviceToken" value="{{$addDevice['deviceToken']}}" hidden>
-    Auth Token: <input name="authToken" value="" type="text">
+      <input name="deviceToken" value="{{$addDevice['deviceToken']}}" hidden>
+      Auth Token: <input name="authToken" value="" type="text">
 
-    <input type="submit">
-  </form>
+      <input type="submit">
+    </form>
+  @endif
+  @if(isset($addDevice['errorMessage']))
+    {{$addDevice['errorMessage']}}
+  @endif
 @endif
 
 @if(isset($verifyDevice))

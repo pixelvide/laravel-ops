@@ -26,6 +26,7 @@ class DeviceController extends Controller
             $addDeviceRes = $dfpGw->send($dfpRequest);
         } catch (\Exception $exception) {
             report($exception);
+            $addDeviceRes['errorMessage'] = $exception->getMessage();
         }
         return view('ops::device-layout', [
             'addDevice' => $addDeviceRes,
