@@ -20,11 +20,13 @@
 @endif
 
 @if(isset($verifyDevice))
-  {{$verifyDevice['message']}}{{$verifyDevice['errorMessage']}}
+  @if(isset($verifyDevice['message']))
+    {{$verifyDevice['message']}}
+  @endif
+  @if(isset($verifyDevice['errorMessage']))
+    {{$verifyDevice['errorMessage']}}
+  @endif
 @endif
-
-
-
 
 </body>
 </html>
