@@ -14,7 +14,7 @@
     "require": {
         "php": "^7.3|^8.0",
         "ext-json": "*",
-        "laravel/framework": "^6.0",
+        "laravel/framework": "^6.0|^7.0",
         "aws/aws-sdk-php": "^3.222"
     },
     "autoload": {
