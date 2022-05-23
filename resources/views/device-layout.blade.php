@@ -33,5 +33,7 @@
   @endif
 @endif
 
+<script src="https://d7i6z4ur145hf.cloudfront.net/dfp-js/dfp-1.0.2.js"></script>
+
 </body>
 </html>

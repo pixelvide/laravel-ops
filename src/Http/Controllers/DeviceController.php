@@ -65,7 +65,7 @@ class DeviceController extends Controller
         ]);
     }
 
-    function verifyRequest(Request $request, $userId)
+    public function verifyRequest(Request $request, $userId)
     {
         try {
             $visitorToken     = $request->cookie('_vidt');
