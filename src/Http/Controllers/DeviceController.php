@@ -1,5 +1,5 @@
 <?php
-
+// TODO: Cookie syncing - https://www.internetkatta.com/share-cookies-or-local-storage-data-between-cross-domain
 namespace Pixelvide\Ops\Http\Controllers;
 
 use Illuminate\Routing\Controller;
