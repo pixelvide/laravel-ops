@@ -5,6 +5,7 @@ namespace Pixelvide\Ops\Http\Controllers;
 use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Cookie;
 use Pixelvide\Ops\DFPGateway;
 use Pixelvide\Ops\DFPRequest;
 
@@ -29,7 +30,7 @@ class DeviceController extends Controller
             $dfpRequest->setAction('AddDevice')
                 ->setAppId(env('DFP_GATEWAY_APP_ID'))
                 ->setVisitorIp($request->getClientIp())
-                ->setVisitorToken($request->cookie('_vidt'))
+                ->setVisitorToken(Cookie::get('_vidt', ''))
                 ->setVisitorUa($request->userAgent());
             $dfpGw        = new DFPGateway();
             $addDeviceRes = $dfpGw->send($dfpRequest);
@@ -50,7 +51,7 @@ class DeviceController extends Controller
             $dfpRequest->setAction('VerifyDevice')
                 ->setAppId(env('DFP_GATEWAY_APP_ID'))
                 ->setVisitorIp($request->getClientIp())
-                ->setVisitorToken($request->cookie('_vidt'))
+                ->setVisitorToken(Cookie::get('_vidt', ''))
                 ->setVisitorUa($request->userAgent())
                 ->addExtraParams('deviceToken', $request->input('deviceToken'))
                 ->addExtraParams('deviceAuthToken', $request->input('authToken'));
@@ -68,22 +69,20 @@ class DeviceController extends Controller
     public function verifyRequest(Request $request, $userId)
     {
         try {
-            $visitorToken     = $request->cookie('_vidt');
-            $dfpCacheKey      = 'dfp:'.$userId.':'.$visitorToken;
-
+            $visitorToken = Cookie::get('_vidt', '');
+            $dfpCacheKey  = 'dfp:'.$userId.':'.$visitorToken;
             if (!(Cache::has($dfpCacheKey))) {
                 $dfpRequest = new DFPRequest();
                 $dfpRequest->setAction('VerifyRequest')
                     ->setAppId(env('DFP_GATEWAY_APP_ID'))
                     ->setVisitorIp($request->getClientIp())
-                    ->setVisitorToken($request->cookie('_vidt'))
+                    ->setVisitorToken($visitorToken)
                     ->setVisitorUa($request->userAgent())
                     ->addExtraParams('userId', $userId);
                 $dfpGw            = new DFPGateway();
                 $verifyRequestRes = $dfpGw->send($dfpRequest);
                 Cache::put($dfpCacheKey, $verifyRequestRes, now()->addMinutes(30));
             }
-
             $verifyRequestRes = Cache::get($dfpCacheKey);
         } catch (\Exception $exception) {
             report($exception);
