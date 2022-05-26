@@ -80,7 +80,7 @@ class DeviceController extends Controller
                     ->setVisitorIp($request->getClientIp())
                     ->setVisitorToken($visitorToken)
                     ->setVisitorUa($request->userAgent())
-                    ->addExtraParams('userId', $userId);
+                    ->addExtraParams('userId', strval($userId));
                 $dfpGw            = new DFPGateway();
                 $verifyRequestRes = $dfpGw->send($dfpRequest);
                 Cache::put($dfpCacheKey, $verifyRequestRes, now()->addMinutes(30));
