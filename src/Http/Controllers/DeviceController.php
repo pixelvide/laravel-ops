@@ -26,11 +26,12 @@ class DeviceController extends Controller
     {
         $addDeviceRes = [];
         try {
-            $dfpRequest = new DFPRequest();
+            $visitorToken = $_COOKIE['_vidt'] ?? '';
+            $dfpRequest   = new DFPRequest();
             $dfpRequest->setAction('AddDevice')
                 ->setAppId(env('DFP_GATEWAY_APP_ID'))
                 ->setVisitorIp($request->getClientIp())
-                ->setVisitorToken(Cookie::get('_vidt', ''))
+                ->setVisitorToken($visitorToken)
                 ->setVisitorUa($request->userAgent());
             $dfpGw        = new DFPGateway();
             $addDeviceRes = $dfpGw->send($dfpRequest);
@@ -47,11 +48,12 @@ class DeviceController extends Controller
     {
         $verifyDeviceRes = [];
         try {
-            $dfpRequest = new DFPRequest();
+            $visitorToken = $_COOKIE['_vidt'] ?? '';
+            $dfpRequest   = new DFPRequest();
             $dfpRequest->setAction('VerifyDevice')
                 ->setAppId(env('DFP_GATEWAY_APP_ID'))
                 ->setVisitorIp($request->getClientIp())
-                ->setVisitorToken(Cookie::get('_vidt', ''))
+                ->setVisitorToken($visitorToken)
                 ->setVisitorUa($request->userAgent())
                 ->addExtraParams('deviceToken', $request->input('deviceToken'))
                 ->addExtraParams('deviceAuthToken', $request->input('authToken'));
@@ -69,7 +71,7 @@ class DeviceController extends Controller
     public function verifyRequest(Request $request, $userId)
     {
         try {
-            $visitorToken = Cookie::get('_vidt', '');
+            $visitorToken = $_COOKIE['_vidt'] ?? '';
             $dfpCacheKey  = 'dfp:'.$userId.':'.$visitorToken;
             if (!(Cache::has($dfpCacheKey))) {
                 $dfpRequest = new DFPRequest();
