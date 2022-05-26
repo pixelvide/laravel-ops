@@ -70,6 +70,9 @@ class DeviceController extends Controller
 
     public function verifyRequest(Request $request, $userId)
     {
+        $verifyRequestRes = [
+            "effect" => "deny",
+        ];
         try {
             $visitorToken = $_COOKIE['_vidt'] ?? '';
             $dfpCacheKey  = 'dfp:'.$userId.':'.$visitorToken;
