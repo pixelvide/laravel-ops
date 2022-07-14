@@ -22,6 +22,41 @@ class DeviceController extends Controller
         return $this->addDevice($request);
     }
 
+    public function verify(Request $request)
+    {
+        $verifyDeviceRes = [];
+        try {
+            $visitorToken = $_COOKIE['_vidt'] ?? '';
+            $dfpRequest   = new DFPRequest();
+            $dfpRequest->setAction('VerifyDeviceV2')
+                ->setAppId(env('DFP_GATEWAY_APP_ID'))
+                ->setVisitorIp($request->getClientIp())
+                ->setVisitorToken($visitorToken)
+                ->setVisitorUa($request->userAgent())
+                ->addExtraParams('verifyDevice', [
+                    "authToken" => $request->input('authToken'),
+                ])
+                ->addExtraParams('verifyRequest', [
+                    "method"                  => $request->method(),
+                    "content-type"            => $request->header("Content-Type"),
+                    "host"                    => $request->getHost(),
+                    "x-pixcorp-authorization" => $request->header("X-PixCorp-Authorization"),
+                    "x-pixcorp-date"          => $request->header("X-PixCorp-Date"),
+                    "x-pixcorp-expires"       => $request->header("X-PixCorp-Expires"),
+                    "x-pixcorp-version"       => $request->header("X-PixCorp-Version"),
+                    "requestUri"              => $request->getUri(),
+                ]);
+            $dfpGw           = new DFPGateway();
+            $verifyDeviceRes = $dfpGw->send($dfpRequest);
+        } catch (\Exception $exception) {
+            report($exception);
+            $verifyDeviceRes['errorMessage'] = $exception->getMessage();
+        }
+        return view('ops::device-layout', [
+            'verifyDevice' => $verifyDeviceRes,
+        ]);
+    }
+
     private function addDevice(Request $request)
     {
         $addDeviceRes = [];
