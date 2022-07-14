@@ -44,7 +44,7 @@ class DeviceController extends Controller
                     "x-pixcorp-date"          => $request->header("X-PixCorp-Date"),
                     "x-pixcorp-expires"       => $request->header("X-PixCorp-Expires"),
                     "x-pixcorp-version"       => $request->header("X-PixCorp-Version"),
-                    "requestUri"              => $request->getUri(),
+                    "requestUri"              => $request->getPathInfo(),
                 ]);
             $dfpGw           = new DFPGateway();
             $verifyDeviceRes = $dfpGw->send($dfpRequest);
