@@ -130,4 +130,37 @@ class DeviceController extends Controller
         }
         return $verifyRequestRes;
     }
+
+    public function verifyRequestV2(Request $request, $userId)
+    {
+        $verifyRequestRes = [
+            "effect" => "deny",
+        ];
+        try {
+            $visitorToken = $_COOKIE['_vidt'] ?? '';
+            $dfpRequest   = new DFPRequest();
+            $dfpRequest->setAction('VerifyRequestV2')
+                ->setAppId(env('DFP_GATEWAY_APP_ID'))
+                ->setVisitorIp($request->getClientIp())
+                ->setVisitorToken($visitorToken)
+                ->setVisitorUa($request->userAgent())
+                ->addExtraParams('userId', strval($userId))
+                ->addExtraParams('verifyRequest', [
+                    "method"                  => $request->method(),
+                    "content-type"            => $request->header("Content-Type"),
+                    "host"                    => $request->getHost(),
+                    "x-pixcorp-authorization" => $request->header("X-PixCorp-Authorization"),
+                    "x-pixcorp-date"          => $request->header("X-PixCorp-Date"),
+                    "x-pixcorp-expires"       => $request->header("X-PixCorp-Expires"),
+                    "x-pixcorp-version"       => $request->header("X-PixCorp-Version"),
+                    "requestUri"              => $request->getPathInfo(),
+                ]);
+            $dfpGw            = new DFPGateway();
+            $verifyRequestRes = $dfpGw->send($dfpRequest);
+        } catch (\Exception $exception) {
+            report($exception);
+            $verifyRequestRes['errorMessage'] = $exception->getMessage();
+        }
+        return $verifyRequestRes;
+    }
 }
