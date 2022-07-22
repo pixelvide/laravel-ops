@@ -161,6 +161,9 @@ class DeviceController extends Controller
             report($exception);
             $verifyRequestRes['errorMessage'] = $exception->getMessage();
         }
+        if (!array_key_exists("effect", $verifyRequestRes,)) {
+            $verifyRequestRes["key"] = "deny";
+        }
         return $verifyRequestRes;
     }
 }
