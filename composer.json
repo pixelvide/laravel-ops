@@ -1,7 +1,7 @@
 {
     "name": "pixelvide/laravel-ops",
     "description": "Ops related URL",
-    "version": "1.2.3",
+    "version": "1.2.4",
     "type": "package",
     "license": "GPL-3.0-or-later",
     "authors": [
@@ -14,7 +14,7 @@
     "require": {
         "php": "^7.3|^8.0",
         "ext-json": "*",
-        "laravel/framework": "^6.0|^7.0",
+        "laravel/framework": "^6.0|^7.0|^8.0",
         "aws/aws-sdk-php": "^3.222"
     },
     "autoload": {
