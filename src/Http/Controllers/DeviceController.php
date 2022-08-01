@@ -136,7 +136,7 @@ class DeviceController extends Controller
     public function verifyRequestV2(Request $request, $userId)
     {
         if(!$this->isProxyRunning($request)){
-            throw new DFPProxyNotRunningException('Device Fingerprint Auth software not running in your local machine');
+            throw new DFPProxyNotRunningException('Device Fingerprint Auth software not running in your local machine', 300);
         }
         $verifyRequestRes = [
             "effect" => "deny",
@@ -170,7 +170,7 @@ class DeviceController extends Controller
             $verifyRequestRes["effect"] = "deny";
         }
         if($verifyRequestRes['effect'] == "deny"){
-            throw new DFPVerifyRequestException('You Device is not authorized to access.');
+            throw new DFPVerifyRequestException('You Device is not authorized to access.',301);
         }
         return $verifyRequestRes;
     }
