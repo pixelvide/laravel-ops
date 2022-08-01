@@ -166,4 +166,16 @@ class DeviceController extends Controller
         }
         return $verifyRequestRes;
     }
+
+    public function authorize(Request $request){
+        $verifyRequestRes = [
+            "effect" => "deny",
+        ];
+        if(empty($request->header('x-pixcorp-authorization')) || empty($request->header('x-pixcorp-date')) ||empty($request->header('x-pixcorp-expires')) ||empty($request->header('x-pixcorp-version'))){
+            $verifyRequestRes = [
+                "effect" => "allow",
+            ];
+        }
+        return $verifyRequestRes;
+    }
 }
