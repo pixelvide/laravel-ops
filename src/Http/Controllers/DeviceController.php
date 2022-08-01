@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Cookie;
 use Pixelvide\Ops\DFPGateway;
 use Pixelvide\Ops\DFPRequest;
+use Pixelvide\Ops\Exceptions\DFPProxyNotRunningException;
+use Pixelvide\Ops\Exceptions\DFPVerifyRequestException;
 
 class DeviceController extends Controller
 {
@@ -133,6 +135,9 @@ class DeviceController extends Controller
 
     public function verifyRequestV2(Request $request, $userId)
     {
+        if(!$this->isProxyRunning($request)){
+            throw new DFPProxyNotRunningException('Device Fingerprint Auth software not running in your local machine');
+        }
         $verifyRequestRes = [
             "effect" => "deny",
         ];
@@ -164,18 +169,17 @@ class DeviceController extends Controller
         if (!array_key_exists("effect", $verifyRequestRes,)) {
             $verifyRequestRes["effect"] = "deny";
         }
+        if($verifyRequestRes['effect'] == "deny"){
+            throw new DFPVerifyRequestException('You Device is not authorized to access.');
+        }
         return $verifyRequestRes;
     }
 
-    public function authorize(Request $request){
-        $verifyRequestRes = [
-            "effect" => "deny",
-        ];
+    private function isProxyRunning(Request $request){
+
         if(empty($request->header('x-pixcorp-authorization')) || empty($request->header('x-pixcorp-date')) ||empty($request->header('x-pixcorp-expires')) ||empty($request->header('x-pixcorp-version'))){
-            $verifyRequestRes = [
-                "effect" => "allow",
-            ];
+            return false;
         }
-        return $verifyRequestRes;
+        return true;
     }
 }
