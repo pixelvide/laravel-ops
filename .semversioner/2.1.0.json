@@ -1,6 +1,6 @@
 [
   {
     "description": "Laravel 9 Support",
-    "type": "major"
+    "type": "minor"
   }
 ]
